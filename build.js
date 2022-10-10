@@ -5,7 +5,11 @@ import markdownit from 'markdown-it';
 import blockEmbedPlugin from 'markdown-it-block-embed';
 import VideoServiceBase from 'markdown-it-block-embed/lib/services/VideoServiceBase.js';
 import YAML from 'yaml';
+import resolveCb from "resolve";
+import {promisify} from 'util';
+import { createReadStream, createWriteStream } from "fs";
 
+const resolve = promisify(resolveCb);
 const md = markdownit({
   html: true,
   linkify: true,
@@ -37,9 +41,14 @@ const lessonsPath = path.resolve('./lessons');
 const indexPathIn = path.resolve('./index.html');
 const indexPathOut = path.join(distPath, 'index.html');
 const configRE = /^---\n([\s\S]*)\n---/;
+async function copy() {
+  return [
+    path.resolve('./main.css'),
+    await resolve('github-markdown-css/github-markdown.css')
+  ];
+}
 
 async function run() {
-  await fs.mkdir(distPath, {recursive: true});
   const lessonTemplate = handlebars.compile(await fs.readFile(lessonBasePath, 'utf-8'), {noEscape: true});
   const lessons = await Promise.all((await fs.readdir(lessonsPath)).map(async lesson => {
     const lessonPath = path.join(lessonsPath, lesson);
@@ -56,6 +65,9 @@ async function run() {
   }));
   const indexTemplate = handlebars.compile(await fs.readFile(indexPathIn, 'utf-8'));
   await fs.writeFile(indexPathOut, indexTemplate({lessons}));
+  await Promise.all((await copy())
+    .map(filePath => fs.readFile(filePath)
+      .then(contents => fs.writeFile(path.join(distPath, path.basename(filePath)), contents))));
 }
 
 run();
