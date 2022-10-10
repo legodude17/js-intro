@@ -1,0 +1,19 @@
+{
+  "name": "js-intro",
+  "version": "0.0.0",
+  "description": "Lessons for my class, Introduction to Programming Fundamentals in JavaScript",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/legodude17/js-intro.git"
+  },
+  "type": "module",
+  "author": "JDB",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/legodude17/js-intro/issues"
+  },
+  "homepage": "https://github.com/legodude17/js-intro#readme"
+}
