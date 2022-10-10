@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/legodude17/js-intro/issues"
   },
-  "homepage": "https://github.com/legodude17/js-intro#readme"
+  "homepage": "https://github.com/legodude17/js-intro#readme",
+  "dependencies": {
+    "handlebars": "^4.7.7",
+    "markdown-it": "^13.0.1"
+  }
 }
