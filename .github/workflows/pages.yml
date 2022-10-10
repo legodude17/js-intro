@@ -37,7 +37,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Install Deps
-        run: npm ci
+        run: npm ci --omit=dev --audit=false
       - name: Build
         run: npm run build
       - name: Upload artifact

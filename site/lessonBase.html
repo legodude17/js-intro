@@ -3,12 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="github-markdown.css">
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
     <div class="markdown-body">
       {{ content }}
+      <div class="nav">
+        {{#if prev}}
+        <a class="nav prev" href="{{prev.url}}">&lt;&lt; Previous</a>
+        {{/if}}
+        <div class="fill"></div>
+        {{#if next}}
+        <a class="nav next" href="{{next.url}}">Next &gt;&gt;</a>
+        {{/if}}
+      </div>
     </div>
   </body>
 </html>
