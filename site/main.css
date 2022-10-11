@@ -30,7 +30,6 @@ div.nav {
   flex-grow: 1;
 }
 
-
 a.nav {
   border-width: 1px;
   border-color: var(--color-fg-muted);
