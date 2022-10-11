@@ -3,18 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="github-markdown.css">
     <link rel="stylesheet" href="main.css">
   </head>
   <body>
     <div class="markdown-body">
-    <h1>Lessons:</h1>
-    <ol>
-    {{#each lessons}}
-      <li><a href="{{this.url}}">{{this.title}}</a></li>
-    {{/each}}
-  </ol>
+      <h1>JavaScript Class</h1>
+      <p>Hi! Welcome to the home page for the my JavaScript class! To get started, click "Introduction", below.</p>
+      <h1>Lessons:</h1>
+      <ol>
+        {{#each lessons}}
+          <li>
+            <a href="{{this.url}}">{{this.title}}</a>
+          </li>
+        {{/each}}
+      </ol>
     </div>
   </body>
 </html>
