@@ -26,13 +26,13 @@ const ee = new EventEmitter();
 
 const md = unified()
   .use(remarkParse)
+  .use(remarkEmbedder.default, {
+    transformers: [oembedTransformer.default]
+  })
   .use(remarkGfm)
   .use(remarkFrontmatter, 'yaml')
   .use(remarkYamlEmit, ee)
   .use(remarkToc)
-  .use(remarkEmbedder, {
-    transformers: [oembedTransformer]
-  })
   .use(remarkRehype)
   .use(rehypeSlug)
   .use(rehypeAutolink, {
