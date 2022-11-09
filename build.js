@@ -73,66 +73,56 @@ async function copy() {
   ];
 }
 
-async function run() {
-  const lessonTemplate = handlebars.compile(
-    await fs.readFile(lessonBasePath, "utf-8"),
-    { noEscape: true }
-  );
-  const additionalData = {};
-  ee.on("data", (file, data) => (additionalData[file] = data));
-  const lessons = await Promise.all(
-    (
-      await fs.readdir(lessonsPath)
-    ).map(async (lesson) => {
-      const data = {};
-      const lessonPath = path.join(lessonsPath, lesson);
-      const lessonName = path.basename(lesson, ".md");
-      data.file = lesson;
-      data.index = parseInt(lessonName, 10);
-      data.url = lessonName + ".html";
-      data.path = path.join(distPath, data.url);
-      data.content = (await md.process(await read(lessonPath))).toString();
-      return data;
-    })
-  );
-  lessons.sort((a, b) => a.index - b.index);
-  for (let i = 0; i < lessons.length; i++) {
-    const lesson = lessons[i];
-    lesson.prev = lessons[i - 1];
-    lesson.next = lessons[i + 1];
-    lessons[i] = { ...lesson, ...additionalData[lesson.file] };
-  }
-  await Promise.all(
-    lessons.map(async (lesson) => {
-      await fs.writeFile(lesson.path, lessonTemplate(lesson));
-      console.error(
-        `lessons/${lesson.index + ".md"} -> dist/${lesson.index + ".html"}`
-      );
-    })
-  );
-  const indexTemplate = handlebars.compile(
-    await fs.readFile(indexPathIn, "utf-8")
-  );
-  await fs.writeFile(indexPathOut, indexTemplate({ lessons }));
-  console.error("site/index.html -> dist/index.html");
-  await Promise.all(
-    (
-      await copy()
-    ).map((filePath) => {
-      const fileName = path.basename(filePath);
-      fs.readFile(filePath)
-        .then((contents) =>
-          fs.writeFile(path.join(distPath, fileName), contents)
-        )
-        .then(() =>
-          console.error(
-            `${path.basename(
-              path.dirname(filePath)
-            )}/${fileName} -> dist/${fileName}`
-          )
-        );
-    })
-  );
+const lessonTemplate = handlebars.compile(
+  await fs.readFile(lessonBasePath, "utf-8"),
+  { noEscape: true }
+);
+const additionalData = {};
+ee.on("data", (file, data) => (additionalData[file] = data));
+const lessons = await Promise.all(
+  (
+    await fs.readdir(lessonsPath)
+  ).map(async (lesson) => {
+    const data = {};
+    const lessonPath = path.join(lessonsPath, lesson);
+    const lessonName = path.basename(lesson, ".md");
+    data.file = lesson;
+    data.index = parseInt(lessonName, 10);
+    data.url = lessonName + ".html";
+    data.path = path.join(distPath, data.url);
+    data.content = (await md.process(await read(lessonPath))).toString();
+    return data;
+  })
+);
+lessons.sort((a, b) => a.index - b.index);
+for (let i = 0; i < lessons.length; i++) {
+  const lesson = lessons[i];
+  lesson.prev = lessons[i - 1];
+  lesson.next = lessons[i + 1];
+  lessons[i] = { ...lesson, ...additionalData[lesson.file] };
 }
-
-run();
+await Promise.all(
+  lessons.map(async (lesson) => {
+    await fs.writeFile(lesson.path, lessonTemplate(lesson));
+    console.error(
+      `lessons/${lesson.index + ".md"} -> dist/${lesson.index + ".html"}`
+    );
+  })
+);
+const indexTemplate = handlebars.compile(
+  await fs.readFile(indexPathIn, "utf-8")
+);
+await fs.writeFile(indexPathOut, indexTemplate({ lessons }));
+console.error("site/index.html -> dist/index.html");
+await Promise.all(
+  (
+    await copy()
+  ).map(async (filePath) => {
+    const fileName = path.basename(filePath);
+    const contents = await fs.readFile(filePath);
+    await fs.writeFile(path.join(distPath, fileName), contents);
+    console.error(
+      `${path.basename(path.dirname(filePath))}/${fileName} -> dist/${fileName}`
+    );
+  })
+);
